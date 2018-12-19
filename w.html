@@ -1,0 +1,59 @@
+<template>
+  <ul class="textMoveList" style="width: 200px; height: 300px; border: 1px solid #000; overflow: hidden; position: relative;">
+    <li class="textMoveOne" v-for="item, index in contentList" :key="index"style=" width: 200px; height: 30px; background: #71c7d5; position: relative;"><span @mouseover="move(index)" @mouseout="stop(index)"  style="min-width: 200px; white-space: nowrap; height: 30px; line-height: 30px; position: absolute; left: 0; display: inline-block;">{{item}}</span></li>
+  </ul>
+</template>
+
+<script>
+  export default {
+    name: "text_move",
+    data(){
+      return {
+        l: 0, // 存放left运动
+        timer: null, // 存放运动的定时器
+        contentList: ['1改革春风吹满地改革春风吹满地改', '2改革春风吹满地改革春风吹满地改改革春风吹满地改革春风吹满地改','改革春风吹', '改革春风吹满地改革春风吹满地改']
+      }
+    },
+    methods: {
+      move(i){ // 鼠标移入文字开始运动
+        let that = this
+        /*
+        * 当文本长度没有超出父级的时候直接return
+        * */
+        if(parseInt($(".textMoveOne").eq(i).find("span").outerWidth(true))-$(".textMoveList").width()<=1){
+          return
+        }
+        /*
+        * 当文本长度超出父级
+        * 1、每60ms向左运动1px
+        * 2、判断文本向左运动的长度是否和文本超出父级的长度是否相等，相等则不再运动
+        * */
+        this.timer = setInterval(function () {
+          // console.log(parseInt($(".textMoveOne").eq(i).find("span").outerWidth(true)))
+          that.l--
+          if(that.l*-1 == parseInt($(".textMoveOne").eq(i).find("span").outerWidth(true))-$(".textMoveList").width()){
+            that.l = $(".textMoveList").width()-parseInt($(".textMoveOne").eq(i).find("span").outerWidth(true))+1
+          }
+          $(".textMoveOne").eq(i).find("span").css("left", that.l+'px')
+        }, 60)
+      },
+      stop(i){ // 鼠标移出文字停止运动
+        /*
+        * 1、清除定时器
+        * 2、初始化记录向左运动的l值
+        * 3、让文本left值为空
+        * */
+        clearInterval(this.timer)
+        this.l = 0
+        $(".textMoveOne").eq(i).find("span").css("left", '0px')
+      }
+    },
+    mounted(){
+
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
